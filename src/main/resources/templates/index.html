@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><h3>Проект TODO LIST, выполняемый в рамках курса Job4j</h3></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><h4><a href="/">Главная</a></h4></td>
+            </tr>
+            <tr>
+                <td><h4><a th:href="@{/tasks}">Задания</a></h4></td>
+            </tr>
+            <tr>
+                <td><h4><a th:href="@{/tasks/create}">Создать задание</a></h4></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer th:include="fragments/footer :: footer"></footer>
+</div>
+</body>

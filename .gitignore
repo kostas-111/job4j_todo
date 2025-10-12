@@ -27,3 +27,23 @@ hs_err_pid*
 
 target
 out
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+#db
+*.db
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr

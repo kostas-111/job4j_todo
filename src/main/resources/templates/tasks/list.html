@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header"></head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<body>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+
+    <div class="row mt-3">
+        <div class="col">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <!-- Группа кнопок фильтров -->
+                <div class="btn-group" role="group">
+                    <a th:href="@{/tasks(filter='all')}"
+                       class="btn btn-outline-primary"
+                       th:classappend="${currentFilter == 'all'} ? 'active'">
+                        Все
+                    </a>
+                    <a th:href="@{/tasks(filter='new')}"
+                       class="btn btn-outline-primary"
+                       th:classappend="${currentFilter == 'new'} ? 'active'">
+                        Новые
+                    </a>
+                    <a th:href="@{/tasks(filter='completed')}"
+                       class="btn btn-outline-primary"
+                       th:classappend="${currentFilter == 'completed'} ? 'active'">
+                        Выполненные
+                    </a>
+                </div>
+
+                <!-- Кнопка "Добавить задание" -->
+                <a th:href="@{/tasks/create}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Добавить задание
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3"></div>
+
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Название</th>
+                <th scope="col">Дата создания</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task: ${tasks}">
+                <td th:text="${task.id}" />
+                <td>
+                    <a th:text="${task.title}"
+                       th:href="@{/tasks/{taskId}(taskId=${task.id})}">
+                    </a>
+                </td>
+                <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm:ss')}" />
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer th:include="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>
