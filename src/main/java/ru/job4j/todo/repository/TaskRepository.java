@@ -15,6 +15,8 @@ public interface TaskRepository {
 
     boolean update(Task task);
 
+    boolean markAsCompleted(Integer id);
+
     List<Task> findAll();
 
     List<Task> findByDone(boolean done);

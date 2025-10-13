@@ -36,20 +36,35 @@ public class HbmTaskRepository implements TaskRepository {
     @Override
     public boolean deleteById(Integer id) {
         return executeWithTransaction(session -> {
-            Task task = session.get(Task.class, id);
-            if (task != null) {
-                session.delete(task);
-                return true;
-            }
-            return false;
+           int deletedCount = session.createQuery(
+               "DELETE FROM Task WHERE id = :taskId")
+               .setParameter("taskId", id)
+               .executeUpdate();
+            return deletedCount > 0;
         });
     }
 
     @Override
     public boolean update(Task task) {
         return executeWithTransaction(session -> {
-            session.update(task);
-            return true;
+            int updateCount = session.createQuery(
+                "UPDATE Task SET title = :fTitle, description = :fDescription WHERE id = :fId")
+                .setParameter("fTitle", task.getTitle())
+                .setParameter("fDescription", task.getDescription())
+                .setParameter("fId", task.getId())
+                .executeUpdate();
+            return updateCount > 0;
+        });
+    }
+
+    @Override
+    public boolean markAsCompleted(Integer id) {
+        return executeWithTransaction(session -> {
+            int updateCount = session.createQuery(
+                    "UPDATE Task SET done = true WHERE id = :taskId")
+                .setParameter("taskId", id)
+                .executeUpdate();
+            return updateCount > 0;
         });
     }
 

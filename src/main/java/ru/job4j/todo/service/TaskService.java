@@ -17,9 +17,9 @@ public interface TaskService {
 
     Task save(Task task);
 
-    boolean deleteById(Integer id);
+    void deleteById(Integer id);
 
-    boolean update(Task task);
+    void update(Task task);
 
     void markAsCompleted(Integer id);
 }

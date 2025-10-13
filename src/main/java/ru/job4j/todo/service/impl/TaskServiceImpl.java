@@ -1,5 +1,6 @@
 package ru.job4j.todo.service.impl;
 
+import exception.TaskNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.impl.HbmTaskRepository;
@@ -19,7 +20,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Optional<Task> findById(Integer id) {
-        return taskRepository.findById(id);
+        Optional<Task> task = taskRepository.findById(id);
+        if (task.isEmpty()) {
+            throw new TaskNotFoundException(id);
+        }
+        return task;
     }
 
     @Override
@@ -43,22 +48,26 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public boolean deleteById(Integer id) {
-        return taskRepository.deleteById(id);
+    public void deleteById(Integer id) {
+        boolean isUpdated = taskRepository.deleteById(id);
+        if (!isUpdated) {
+            throw new TaskNotFoundException(id);
+        }
     }
 
     @Override
-    public boolean update(Task task) {
-        return taskRepository.update(task);
+    public void update(Task task) {
+        boolean isUpdated = taskRepository.update(task);
+        if (!isUpdated) {
+            throw new TaskNotFoundException(task.getId());
+        }
     }
 
     @Override
     public void markAsCompleted(Integer id) {
-        Optional<Task> taskOptional = taskRepository.findById(id);
-        if (taskOptional.isPresent()) {
-            Task task = taskOptional.get();
-            task.setDone(true);
-            taskRepository.update(task);
+        boolean isUpdated = taskRepository.markAsCompleted(id);
+        if (!isUpdated) {
+            throw new TaskNotFoundException(id);
         }
     }
 }

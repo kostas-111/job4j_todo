@@ -3,5 +3,5 @@ CREATE TABLE tasks (
    title TEXT,
    description TEXT,
    created TIMESTAMP default now(),
-   done BOOLEAN default true
+   done BOOLEAN default false
 );

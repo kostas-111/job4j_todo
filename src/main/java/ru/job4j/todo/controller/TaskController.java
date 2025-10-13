@@ -7,6 +7,8 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.impl.TaskServiceImpl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 @Controller
 @RequestMapping("/tasks")
@@ -20,19 +22,19 @@ public class TaskController {
 
     @GetMapping
     public String getAll(@RequestParam(defaultValue = "all") String filter, Model model) {
-        List<Task> tasks;
-        switch (filter) {
-            case "completed":
-                tasks = taskService.findCompleted();
-                break;
-            case "new":
-                tasks = taskService.findNew();
-                break;
-            case "all":
-            default:
-                tasks = taskService.findAll();
-                break;
-        }
+
+        /*
+        Реализовал Map c фильтрами.
+        Теперь достаточно добавить фильтр сюда, чтобы он появился
+         */
+        Map<String, Supplier<List<Task>>> filters = Map.of(
+            "completed", taskService::findCompleted,
+            "new", taskService::findNew,
+            "all", taskService::findAll
+        );
+        Supplier<List<Task>> strategy = filters.getOrDefault(filter, taskService::findAll);
+        List<Task> tasks = strategy.get();
+
         model.addAttribute("tasks", tasks);
         model.addAttribute("currentFilter", filter);
         return "tasks/list";
@@ -44,62 +46,37 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.save(task);
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+    public String create(@ModelAttribute Task task) {
+        taskService.save(task);
+        return "redirect:/tasks";
+
     }
 
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
-        var vacancyOptional = taskService.findById(id);
-        if (vacancyOptional.isEmpty()) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдено");
-            return "errors/404";
-        }
+        Task task = taskService.findById(id).get();
         model.addAttribute("tasks", taskService.findAll());
-        model.addAttribute("task", vacancyOptional.get());
+        model.addAttribute("task", task);
         return "tasks/one";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(Model model, @PathVariable int id) {
-        var isDeleted = taskService.deleteById(id);
-        if (!isDeleted) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдено");
-            return "errors/404";
-        }
+    public String delete(@PathVariable int id) {
+        taskService.deleteById(id);
         return "redirect:/tasks";
     }
 
     @GetMapping("/update/{id}")
     public String getUpdatePage(Model model, @PathVariable int id) {
         var vacancyOptional = taskService.findById(id);
-        if (vacancyOptional.isEmpty()) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдено");
-            return "errors/404";
-        }
         model.addAttribute("task", vacancyOptional.get());
         return "tasks/update";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
-        try {
-            boolean isUpdated = taskService.update(task);
-            if (!isUpdated) {
-                model.addAttribute("message", "Задание с указанным идентификатором не найдено");
-                return "errors/404";
-            }
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+    public String update(@ModelAttribute Task task) {
+        taskService.update(task);
+        return "redirect:/tasks";
     }
 
     @GetMapping("/complete/{id}")
