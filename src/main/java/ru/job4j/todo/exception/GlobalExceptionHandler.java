@@ -1,4 +1,4 @@
-package exception;
+package ru.job4j.todo.exception;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

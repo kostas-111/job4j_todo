@@ -1,6 +1,6 @@
 package ru.job4j.todo.service.impl;
 
-import exception.TaskNotFoundException;
+import ru.job4j.todo.exception.TaskNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.impl.HbmTaskRepository;

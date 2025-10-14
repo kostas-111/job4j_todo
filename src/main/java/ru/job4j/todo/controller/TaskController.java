@@ -15,23 +15,20 @@ import java.util.function.Supplier;
 public class TaskController {
 
     private final TaskServiceImpl taskService;
+    private final Map<String, Supplier<List<Task>>> filters;
 
     public TaskController(TaskServiceImpl taskService) {
         this.taskService = taskService;
+        this.filters = Map.of(
+            "completed", taskService::findCompleted,
+            "new", taskService::findNew,
+            "all", taskService::findAll
+        );
     }
 
     @GetMapping
     public String getAll(@RequestParam(defaultValue = "all") String filter, Model model) {
 
-        /*
-        Реализовал Map c фильтрами.
-        Теперь достаточно добавить фильтр сюда, чтобы он появился
-         */
-        Map<String, Supplier<List<Task>>> filters = Map.of(
-            "completed", taskService::findCompleted,
-            "new", taskService::findNew,
-            "all", taskService::findAll
-        );
         Supplier<List<Task>> strategy = filters.getOrDefault(filter, taskService::findAll);
         List<Task> tasks = strategy.get();
 

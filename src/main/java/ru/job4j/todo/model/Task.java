@@ -22,13 +22,11 @@ public class Task {
     @EqualsAndHashCode.Include
     private String title;
 
-    @EqualsAndHashCode.Include
     private String description;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT NOW()", insertable = false)
     private LocalDateTime created;
 
     @Column(columnDefinition = "boolean default false")
-    @EqualsAndHashCode.Include
     private boolean done;
 }
