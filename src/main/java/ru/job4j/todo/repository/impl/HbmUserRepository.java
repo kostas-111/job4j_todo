@@ -47,6 +47,15 @@ public class HbmUserRepository implements UserRepository {
 	}
 
 	@Override
+	public Optional<User> findByLogin(String login) {
+		return transactionHelper.executeWithTransaction(sessionFactory, session ->
+			session.createQuery("FROM User WHERE login = :login", User.class)
+				.setParameter("login", login)
+				.uniqueResultOptional()
+		);
+	}
+
+	@Override
 	public boolean deleteById(int id) {
 		return transactionHelper.executeWithTransaction(sessionFactory, session -> {
 			int deletedCount = session.createQuery(
@@ -63,5 +72,4 @@ public class HbmUserRepository implements UserRepository {
 			session.createQuery("FROM User", User.class).list()
 		);
 	}
-
 }

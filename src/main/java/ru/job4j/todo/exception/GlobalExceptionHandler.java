@@ -20,6 +20,18 @@ public class GlobalExceptionHandler {
 		return "errors/404";
 	}
 
+	@ExceptionHandler(LoginExistedException.class)
+	public String handleLoginNotUnique(LoginExistedException exception, Model model) {
+		model.addAttribute("message", exception.getMessage());
+		return "errors/404";
+	}
+
+	@ExceptionHandler(LoginPasswordWrongException.class)
+	public String handleLoginPasswordWrong(LoginPasswordWrongException exception, Model model) {
+		model.addAttribute("message", exception.getMessage());
+		return "errors/404";
+	}
+
 	@ExceptionHandler(Exception.class)
 	public String handleGeneralException(Exception exception, Model model) {
 		model.addAttribute("message", "Произошла ошибка: " + exception.getMessage());

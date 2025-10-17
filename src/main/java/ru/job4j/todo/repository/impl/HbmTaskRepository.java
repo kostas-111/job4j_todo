@@ -75,7 +75,7 @@ public class HbmTaskRepository implements TaskRepository {
     @Override
     public List<Task> findAll() {
         return transactionHelper.executeWithTransaction(sessionFactory, session ->
-                session.createQuery("FROM Task", Task.class).list()
+                session.createQuery("FROM Task ORDER BY created DESC", Task.class).list()
         );
     }
 
