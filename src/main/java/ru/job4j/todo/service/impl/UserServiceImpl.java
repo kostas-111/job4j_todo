@@ -1,5 +1,6 @@
 package ru.job4j.todo.service.impl;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 
 import ru.job4j.todo.exception.LoginExistedException;
@@ -21,11 +22,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User save(User user) {
-		Optional<User> existingUser = userRepository.findByLogin(user.getLogin());
-		if (existingUser.isPresent()) {
+		try {
+			return userRepository.save(user);
+		} catch (ConstraintViolationException e) {
 			throw new LoginExistedException(user.getLogin());
 		}
-		return userRepository.save(user);
 	}
 
 	@Override
