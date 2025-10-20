@@ -9,7 +9,7 @@ public interface TaskRepository {
 
     Optional<Task> findById(Integer id);
 
-    Task save(Task task);
+    void save(Task task);
 
     boolean deleteById(Integer id);
 

@@ -15,7 +15,7 @@ public interface TaskService {
 
     List<Task> findNew();
 
-    Task save(Task task);
+    void save(Task task);
 
     void deleteById(Integer id);
 

@@ -21,9 +21,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User save(User user) {
+	public void save(User user) {
 		try {
-			return userRepository.save(user);
+			userRepository.save(user);
 		} catch (ConstraintViolationException e) {
 			throw new LoginExistedException(user.getLogin());
 		}

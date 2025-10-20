@@ -1,75 +1,64 @@
 package ru.job4j.todo.repository.impl;
 
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.repository.UserRepository;
 import ru.job4j.todo.utils.HibernateTransactionHelper;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class HbmUserRepository implements UserRepository {
 
 	private final HibernateTransactionHelper transactionHelper;
-	private final SessionFactory sessionFactory;
 
-	public HbmUserRepository(HibernateTransactionHelper transactionHelper,
-		SessionFactory sessionFactory) {
+	public HbmUserRepository(HibernateTransactionHelper transactionHelper) {
 		this.transactionHelper = transactionHelper;
-		this.sessionFactory = sessionFactory;
 	}
 
 	@Override
-	public User save(User user) {
-		return transactionHelper.executeWithTransaction(sessionFactory, session -> {
-			session.save(user);
-			return user;
-		});
+	public void save(User user) {
+		transactionHelper.run(session ->
+			session.save(user));
 	}
 
 	@Override
 	public Optional<User> findById(Integer id) {
-		return transactionHelper.executeWithTransaction(sessionFactory, session ->
-			Optional.ofNullable(session.get(User.class, id))
+		return transactionHelper.optional(
+			"FROM User WHERE id = :fId", User.class,
+				  Map.of("fId", id)
 		);
 	}
 
 	@Override
 	public Optional<User> findByLoginAndPassword(String login, String password) {
-		return transactionHelper.executeWithTransaction(sessionFactory, session ->
-			session.createQuery("FROM User WHERE login = :login and password = :password", User.class)
-				.setParameter("login", login)
-				.setParameter("password", password)
-				.uniqueResultOptional()
+		return transactionHelper.optional(
+			"FROM User WHERE login = :fLogin and password = :fPassword", User.class,
+				  Map.of("fLogin", login,
+				   		 "fPassword", password)
 		);
 	}
 
 	@Override
 	public Optional<User> findByLogin(String login) {
-		return transactionHelper.executeWithTransaction(sessionFactory, session ->
-			session.createQuery("FROM User WHERE login = :login", User.class)
-				.setParameter("login", login)
-				.uniqueResultOptional()
+		return transactionHelper.optional(
+			"FROM User WHERE login = :fLogin", User.class,
+				  Map.of("fLogin", login)
 		);
 	}
 
 	@Override
 	public boolean deleteById(int id) {
-		return transactionHelper.executeWithTransaction(sessionFactory, session -> {
-			int deletedCount = session.createQuery(
-					"DELETE FROM User WHERE id = :userId")
-				.setParameter("userId", id)
-				.executeUpdate();
-			return deletedCount > 0;
-		});
+		return transactionHelper.run(
+			"DELETE FROM User WHERE id = :fId",
+				  Map.of("fId", id)
+		);
 	}
 
 	@Override
 	public Collection<User> findAll() {
-		return transactionHelper.executeWithTransaction(sessionFactory, session ->
-			session.createQuery("FROM User", User.class).list()
-		);
+		return transactionHelper.query("FROM User ORDER BY created DESC", User.class);
 	}
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-	User save(User user);
+	void save(User user);
 
 	Optional<User> findByLoginAndPassword(String login, String password);
 }
