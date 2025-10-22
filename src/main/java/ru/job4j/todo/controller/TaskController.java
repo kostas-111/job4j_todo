@@ -50,19 +50,13 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task,
-                         @RequestParam Integer priorityId,
-                         HttpSession session) {
+    public String create(@ModelAttribute Task task, HttpSession session) {
 
         User currentUser = (User) session.getAttribute("user");
         task.setUser(currentUser);
 
-        var priority = priorityService.findById(priorityId);
-        task.setPriority(priority.get());
-
         taskService.save(task);
         return "redirect:/tasks";
-
     }
 
     @GetMapping("/{id}")
@@ -88,11 +82,7 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task,
-                         @RequestParam Integer priorityId) {
-
-        var priority = priorityService.findById(priorityId);
-        task.setPriority(priority.get());
+    public String update(@ModelAttribute Task task) {
         taskService.update(task);
         return "redirect:/tasks";
     }
