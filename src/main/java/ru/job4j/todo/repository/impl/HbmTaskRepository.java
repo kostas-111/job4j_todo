@@ -44,9 +44,13 @@ public class HbmTaskRepository implements TaskRepository {
 	@Override
 	public boolean update(Task task) {
 		return transactionHelper.run(
-			"UPDATE Task SET title = :fTitle, description = :fDescription WHERE id = :fId",
+			"UPDATE Task SET title = :fTitle, "
+					+ "description = :fDescription, "
+					+ "priority_id = :fPriorityId "
+					+ "WHERE id = :fId",
 					Map.of("fTitle", task.getTitle(),
 						   "fDescription", task.getDescription(),
+							 "fPriorityId", task.getPriority().getId(),
 						   "fId", task.getId()
 					)
 		);
@@ -62,13 +66,14 @@ public class HbmTaskRepository implements TaskRepository {
 
 	@Override
 	public List<Task> findAll() {
-		return transactionHelper.query("FROM Task ORDER BY created DESC", Task.class);
+		return transactionHelper.query("FROM Task f JOIN FETCH f.priority ORDER BY created DESC",
+				Task.class);
 	}
 
 	@Override
 	public List<Task> findByDone(boolean done) {
 		return transactionHelper.query(
-			"FROM Task WHERE done = :done ORDER BY created DESC", Task.class,
+			"FROM Task f JOIN FETCH f.priority WHERE done = :done ORDER BY created DESC", Task.class,
 				  Map.of("done", done)
 		);
 	}
