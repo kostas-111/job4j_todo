@@ -13,6 +13,44 @@
                 </div>
             </div>
         </div>
+
+            <!-- ПРИОРИТЕТ -->
+        <div class="mb-3">
+            <label class="form-label fs-3 fw-bold"><b>Приоритет</b></label>
+            <div class="border p-1 bg-light">
+            <span th:if="${task.priority?.name == 'срочная'}"
+                  class="btn btn-danger me-2 mb-2 fw-bold"
+                  th:text="${task.priority.name}"
+                  style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+                <span th:unless="${task.priority?.name == 'срочная'}"
+                      class="btn btn-secondary me-2 mb-2 fw-bold"
+                      th:text="${task.priority?.name}"
+                      style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+            </div>
+        </div>
+
+            <!-- КАТЕГОРИИ -->
+        <div class="mb-3">
+            <label class="form-label fs-3 fw-bold"><b>Категории</b></label>
+            <div class="border p-1 bg-light" th:if="${task.categories != null and !task.categories.empty}">
+                <th:block th:each="category, iter : ${task.categories}">
+            <span th:switch="${iter.index % 4}">
+                <span th:case="0" class="btn btn-primary me-2 mb-2 fw-bold" th:text="${category.name}"
+                      style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+                <span th:case="1" class="btn btn-success me-2 mb-2 fw-bold" th:text="${category.name}"
+                      style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+                <span th:case="2" class="btn btn-warning me-2 mb-2 fw-bold" th:text="${category.name}"
+                      style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+                <span th:case="3" class="btn btn-info me-2 mb-2 fw-bold" th:text="${category.name}"
+                      style="font-size: 1rem; padding: 0.5em 0.5em; color: #000000 !important; pointer-events: none;"></span>
+            </span>
+                </th:block>
+            </div>
+            <div class="border p-1 bg-light text-muted fs-6" th:if="${task.categories == null or task.categories.empty}">
+                <i>Категории не указаны</i>
+            </div>
+        </div>
+
         <div class="mb-3">
             <label class="form-label"><b>Описание</b></label>
             <div class="border p-3 bg-light" style="min-height: 120px; line-height: 1.5;" th:text="${task.description}"></div>

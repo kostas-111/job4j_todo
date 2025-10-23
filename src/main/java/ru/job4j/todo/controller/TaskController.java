@@ -1,12 +1,17 @@
 package ru.job4j.todo.controller;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.impl.CategoryServiceImpl;
 import ru.job4j.todo.service.impl.PriorityServiceImpl;
 import ru.job4j.todo.service.impl.TaskServiceImpl;
 
@@ -20,9 +25,11 @@ public class TaskController {
 
     private final TaskServiceImpl taskService;
     private final PriorityServiceImpl priorityService;
+    private final CategoryServiceImpl categoryService;
     private final Map<String, Supplier<List<Task>>> filters;
 
-    public TaskController(TaskServiceImpl taskService, PriorityServiceImpl priorityService) {
+    public TaskController(TaskServiceImpl taskService, PriorityServiceImpl priorityService,
+        CategoryServiceImpl categoryService) {
         this.taskService = taskService;
         this.filters = Map.of(
             "completed", taskService::findCompleted,
@@ -30,6 +37,7 @@ public class TaskController {
             "all", taskService::findAll
         );
       this.priorityService = priorityService;
+      this.categoryService = categoryService;
     }
 
     @GetMapping
@@ -46,14 +54,26 @@ public class TaskController {
     @GetMapping("/create")
     public String getCreationPage(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession session) {
+    public String create(@ModelAttribute Task task,
+        @RequestParam(required = false) List<Integer> categoryIds,
+        HttpSession session) {
 
         User currentUser = (User) session.getAttribute("user");
         task.setUser(currentUser);
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            List<Category> categories = categoryIds.stream()
+                .map(categoryService::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+            task.setCategories(categories);
+        }
 
         taskService.save(task);
         return "redirect:/tasks";

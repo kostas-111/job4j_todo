@@ -22,7 +22,10 @@ public class HbmTaskRepository implements TaskRepository {
     @Override
     public Optional<Task> findById(Integer id) {
         return transactionHelper.optional(
-			    "FROM Task WHERE id = :fId", Task.class,
+			    "SELECT t FROM Task t "
+							+ "LEFT JOIN FETCH t.priority "
+							+ "LEFT JOIN FETCH t.categories "
+							+ "WHERE t.id = :fId", Task.class,
 			           Map.of("fId", id)
         );
     }

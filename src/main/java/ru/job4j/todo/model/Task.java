@@ -1,5 +1,7 @@
 package ru.job4j.todo.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,4 +39,12 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "priority_id")
     private Priority priority;
+
+    @ManyToMany
+    @JoinTable(
+        name = "tasks_categories_mapping",
+        joinColumns = { @JoinColumn(name = "task_id") },
+        inverseJoinColumns = { @JoinColumn(name = "category_id") }
+    )
+    private List<Category> categories = new ArrayList<>();
 }
