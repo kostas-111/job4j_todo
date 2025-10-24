@@ -1,14 +1,10 @@
 package ru.job4j.todo.controller;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Category;
-import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.impl.CategoryServiceImpl;
@@ -67,14 +63,9 @@ public class TaskController {
         task.setUser(currentUser);
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
-            List<Category> categories = categoryIds.stream()
-                .map(categoryService::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+            List<Category> categories = categoryService.findAllById(categoryIds);
             task.setCategories(categories);
         }
-
         taskService.save(task);
         return "redirect:/tasks";
     }

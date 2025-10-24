@@ -26,6 +26,14 @@ public class HbmCategoryRepository implements CategoryRepository {
   }
 
   @Override
+  public List<Category> findAllById(List<Integer> ids) {
+    return transactionHelper.query(
+        "FROM Category WHERE id in :fId", Category.class,
+        Map.of("fId", ids)
+    );
+  }
+
+  @Override
   public List<Category> findAll() {
     return transactionHelper.query("FROM Category ORDER BY id", Category.class);
   }

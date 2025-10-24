@@ -8,5 +8,7 @@ public interface CategoryService {
 
   Optional<Category> findById(Integer id);
 
+  List<Category> findAllById(List<Integer> ids);
+
   List<Category> findAll();
 }
