@@ -1,5 +1,7 @@
 package ru.job4j.todo.controller;
 
+import java.time.ZoneId;
+import java.util.TimeZone;
 import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,13 +39,21 @@ public class TaskController {
     }
 
     @GetMapping
-    public String getAll(@RequestParam(defaultValue = "all") String filter, Model model) {
+    public String getAll(
+        @RequestParam(defaultValue = "all") String filter,
+        Model model,
+        HttpSession session) {
 
         Supplier<List<Task>> strategy = filters.getOrDefault(filter, taskService::findAll);
         List<Task> tasks = strategy.get();
 
+        User currentUser = (User) session.getAttribute("user");
+
+        ZoneId userZoneId = convertToZoneId(currentUser.getUserZone());
+
         model.addAttribute("tasks", tasks);
         model.addAttribute("currentFilter", filter);
+        model.addAttribute("userZoneId", userZoneId);
         return "tasks/list";
     }
 
@@ -102,5 +112,18 @@ public class TaskController {
     public String completeTask(@PathVariable Integer id) {
         taskService.markAsCompleted(id);
         return "redirect:/tasks";
+    }
+
+    /**
+     * Конвертирует строку часового пояса в ZoneId
+     */
+    private ZoneId convertToZoneId(String timeZoneId) {
+
+        if (timeZoneId == null || timeZoneId.trim().isEmpty()) {
+            return ZoneId.of("UTC+3");
+        }
+
+        TimeZone timeZone = TimeZone.getTimeZone(timeZoneId.trim());
+        return timeZone.toZoneId();
     }
 }

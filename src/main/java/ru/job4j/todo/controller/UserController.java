@@ -1,6 +1,11 @@
 package ru.job4j.todo.controller;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TimeZone;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +28,26 @@ public class UserController {
 	}
 
 	@GetMapping("/register")
-	public String getRegistrationPage() {
+	public String getRegistrationPage(Model model) {
+
+		/*
+		Получаем все доступные часовые пояса
+		 */
+		List<TimeZone> timezones = new ArrayList<>();
+		for (String timeId : TimeZone.getAvailableIDs()) {
+			timezones.add(TimeZone.getTimeZone(timeId));
+		}
+		timezones.sort(Comparator.comparing(TimeZone::getID));
+
+		/*
+		Часовой пояс по умолчанию
+		 */
+		TimeZone defaultTimezone = TimeZone.getDefault();
+
+		model.addAttribute("timezones", timezones);
+		model.addAttribute("defaultTimezone",
+				defaultTimezone.getID() + " : " + defaultTimezone.getDisplayName());
+
 		return "users/register";
 	}
 

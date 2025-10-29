@@ -33,4 +33,7 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+
+	@Column(name = "user_zone")
+	private String userZone;
 }

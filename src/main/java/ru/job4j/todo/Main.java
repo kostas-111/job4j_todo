@@ -1,5 +1,7 @@
 package ru.job4j.todo;
 
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,4 +11,8 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 
+    @PostConstruct
+    void initTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 }

@@ -61,7 +61,12 @@
                     </a>
                 </td>
                 <td th:text="${task.user.name}" />
-                <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm:ss')}" />
+
+                <td th:text="${#temporals.format(
+                    task.created.atZone(T(java.time.ZoneId).of('UTC')).withZoneSameInstant(userZoneId),
+                    'yyyy-MM-dd HH:mm'
+                )}"></td>
+
                 <td th:text="${task.priority.name}" />
             </tr>
             </tbody>
